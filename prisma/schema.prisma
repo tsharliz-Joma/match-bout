@@ -1,0 +1,271 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CoachRole {
+  COACH
+  GYM_ADMIN
+}
+
+enum CoachPlan {
+  FREE
+  PRO
+}
+
+enum GymPlan {
+  FREE
+  GYM_PRO
+}
+
+enum CoachStatus {
+  ONBOARDING
+  PENDING_APPROVAL
+  ACTIVE
+}
+
+enum Stance {
+  ORTHODOX
+  SOUTHPAW
+  SWITCH
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  PRO
+}
+
+enum StancePreference {
+  ANY
+  ORTHODOX
+  SOUTHPAW
+  SWITCH
+}
+
+enum EventJoinStatus {
+  PENDING
+  APPROVED
+  DECLINED
+  CANCELLED
+}
+
+enum SparRequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELLED
+}
+
+enum JoinRequestStatus {
+  PENDING
+  APPROVED
+  DECLINED
+  CANCELLED
+}
+
+enum NotificationType {
+  EVENT_JOINED
+  REQUEST_RECEIVED
+  REQUEST_ACCEPTED
+  REQUEST_DECLINED
+}
+
+enum NotificationChannel {
+  IN_APP
+  PUSH
+  EMAIL
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
+  WEB
+}
+
+model Coach {
+  id           String      @id @default(cuid())
+  gymId        String?
+  fullName     String
+  email        String      @unique
+  passwordHash String
+  role         CoachRole   @default(COACH)
+  status       CoachStatus @default(ONBOARDING)
+  plan         CoachPlan   @default(FREE)
+  cancellationRate   Float @default(0)
+  noShowRate         Float @default(0)
+  responsivenessScore Float @default(0)
+  approvalRate       Float @default(0)
+  profileImageUrl    String?
+  createdAt    DateTime    @default(now())
+
+  gym            Gym?             @relation(fields: [gymId], references: [id])
+  createdGyms    Gym[]            @relation("GymCreatedBy")
+  fighters       CoachFighter[]
+  eventsCreated  SparringEvent[]  @relation("EventsCreated")
+  eventJoins     EventJoin[]
+  joinRequests   GymJoinRequest[]
+  sparSent       SparRequest[]    @relation("SparRequestFrom")
+  sparReceived   SparRequest[]    @relation("SparRequestTo")
+  notifications  Notification[]
+  devices        CoachDevice[]
+}
+
+model Gym {
+  id               String     @id @default(cuid())
+  name             String
+  createdByCoachId String
+  address          String
+  suburb           String
+  state            String
+  country          String
+  phone            String?
+  heroImageUrl     String?
+  plan             GymPlan    @default(FREE)
+  isVerified       Boolean    @default(false)
+  createdAt        DateTime   @default(now())
+
+  createdByCoach Coach             @relation("GymCreatedBy", fields: [createdByCoachId], references: [id])
+  coaches        Coach[]
+  fighters       Fighter[]
+  events         SparringEvent[]
+  joinRequests   GymJoinRequest[]
+  sparRequests   SparRequest[]
+}
+
+model Fighter {
+  id          String    @id @default(cuid())
+  gymId       String
+  fullName    String
+  age         Int
+  heightCm    Int
+  weightKg    Int
+  stance      Stance
+  totalFights Int
+  wins        Int
+  losses      Int
+  profileImageUrl String?
+  createdAt   DateTime  @default(now())
+
+  gym         Gym            @relation(fields: [gymId], references: [id])
+  coaches     CoachFighter[]
+  eventJoins  EventJoin[]
+  sparRequests SparRequestFighter[]
+}
+
+model CoachFighter {
+  coachId   String
+  fighterId String
+  createdAt DateTime @default(now())
+
+  coach  Coach  @relation(fields: [coachId], references: [id])
+  fighter Fighter @relation(fields: [fighterId], references: [id])
+
+  @@id([coachId, fighterId])
+}
+
+model SparringEvent {
+  id                String           @id @default(cuid())
+  gymId             String
+  createdByCoachId  String
+  title             String
+  description       String
+  dateTimeStart     DateTime
+  dateTimeEnd       DateTime
+  skillLevel        SkillLevel
+  weightClassMinKg  Int
+  weightClassMaxKg  Int
+  stancePreference  StancePreference @default(ANY)
+  maxParticipants   Int
+  createdAt         DateTime         @default(now())
+
+  gym            Gym         @relation(fields: [gymId], references: [id])
+  createdByCoach Coach       @relation("EventsCreated", fields: [createdByCoachId], references: [id])
+  joins          EventJoin[]
+}
+
+model EventJoin {
+  id        String          @id @default(cuid())
+  eventId   String
+  coachId   String
+  fighterId String
+  status    EventJoinStatus @default(PENDING)
+  createdAt DateTime        @default(now())
+
+  event   SparringEvent @relation(fields: [eventId], references: [id])
+  coach   Coach         @relation(fields: [coachId], references: [id])
+  fighter Fighter       @relation(fields: [fighterId], references: [id])
+
+  @@unique([eventId, fighterId])
+}
+
+model SparRequest {
+  id               String            @id @default(cuid())
+  fromCoachId      String
+  toCoachId        String
+  proposedGymId    String?
+  proposedDateTime DateTime
+  message          String
+  status           SparRequestStatus @default(PENDING)
+  createdAt        DateTime          @default(now())
+
+  fromCoach Coach @relation("SparRequestFrom", fields: [fromCoachId], references: [id])
+  toCoach   Coach @relation("SparRequestTo", fields: [toCoachId], references: [id])
+  proposedGym Gym? @relation(fields: [proposedGymId], references: [id])
+  fighters  SparRequestFighter[]
+}
+
+model SparRequestFighter {
+  sparRequestId String
+  fighterId     String
+  createdAt     DateTime @default(now())
+
+  sparRequest SparRequest @relation(fields: [sparRequestId], references: [id])
+  fighter     Fighter     @relation(fields: [fighterId], references: [id])
+
+  @@id([sparRequestId, fighterId])
+}
+
+model GymJoinRequest {
+  id        String            @id @default(cuid())
+  gymId     String
+  coachId   String
+  status    JoinRequestStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+
+  gym   Gym   @relation(fields: [gymId], references: [id])
+  coach Coach @relation(fields: [coachId], references: [id])
+
+  @@unique([gymId, coachId])
+}
+
+model Notification {
+  id        String              @id @default(cuid())
+  toCoachId String
+  type      NotificationType
+  title     String
+  body      String
+  linkUrl   String?
+  isRead    Boolean             @default(false)
+  channel   NotificationChannel @default(IN_APP)
+  createdAt DateTime            @default(now())
+
+  toCoach Coach @relation(fields: [toCoachId], references: [id])
+}
+
+model CoachDevice {
+  id        String         @id @default(cuid())
+  coachId   String
+  platform  DevicePlatform
+  pushToken String
+  createdAt DateTime       @default(now())
+
+  coach Coach @relation(fields: [coachId], references: [id])
+
+  @@unique([coachId, pushToken])
+}
