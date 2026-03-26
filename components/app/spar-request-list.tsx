@@ -1,6 +1,7 @@
 "use client";
 
 import { SparRequestStatus } from "@prisma/client";
+import { useRouter } from "next/navigation";
 import { respondSparRequest } from "@/lib/actions/requests";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,8 @@ interface SparRequestItem {
 }
 
 export function SparRequestList({ requests }: { requests: SparRequestItem[] }) {
+  const router = useRouter();
+
   if (requests.length === 0) {
     return <p className="text-sm text-muted">No spar requests yet.</p>;
   }
@@ -30,7 +33,7 @@ export function SparRequestList({ requests }: { requests: SparRequestItem[] }) {
       return;
     }
     toast.success("Request updated");
-    window.location.reload();
+    router.refresh();
   };
 
   return (

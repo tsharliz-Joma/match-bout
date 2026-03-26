@@ -76,6 +76,8 @@ export default async function DashboardPage() {
           <EmptyState
             title="No upcoming events"
             description="Create your first sparring event to start matching fighters."
+            actionLabel="Create event"
+            actionHref="/app/events/new"
           />
         ) : (
           <div className="grid gap-4 lg:grid-cols-2">

@@ -1,12 +1,15 @@
 "use client";
 
 import { EventJoinStatus } from "@prisma/client";
+import { useRouter } from "next/navigation";
 import { updateEventJoinStatus } from "@/lib/actions/events";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 export function EventJoinList({ joins }: { joins: { id: string; fighterName: string; coachName: string; status: EventJoinStatus }[] }) {
+  const router = useRouter();
+
   if (joins.length === 0) {
     return <p className="text-sm text-muted">No join requests yet.</p>;
   }
@@ -18,7 +21,7 @@ export function EventJoinList({ joins }: { joins: { id: string; fighterName: str
       return;
     }
     toast.success("Join request updated");
-    window.location.reload();
+    router.refresh();
   };
 
   return (

@@ -47,7 +47,7 @@ export default function SignUpPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="font-display text-2xl tracking-widest">match-bout</p>
+        <p className="font-display text-2xl tracking-widest">SparConnect</p>
         <h1 className="mt-2 text-xl font-semibold">Create account</h1>
         <p className="text-sm text-muted">Start managing sparring events today.</p>
       </div>
@@ -56,14 +56,23 @@ export default function SignUpPage() {
         <div className="space-y-2">
           <Label htmlFor="fullName">Full name</Label>
           <Input id="fullName" {...form.register("fullName")} />
+          {form.formState.errors.fullName?.message ? (
+            <p className="text-xs text-emberGlow">{form.formState.errors.fullName.message}</p>
+          ) : null}
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input id="email" type="email" {...form.register("email")} />
+          {form.formState.errors.email?.message ? (
+            <p className="text-xs text-emberGlow">{form.formState.errors.email.message}</p>
+          ) : null}
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <Input id="password" type="password" {...form.register("password")} />
+          {form.formState.errors.password?.message ? (
+            <p className="text-xs text-emberGlow">{form.formState.errors.password.message}</p>
+          ) : null}
         </div>
         <input type="hidden" {...form.register("profileImageUrl")} />
         <ImageUpload

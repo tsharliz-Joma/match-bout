@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EventJoinForm } from "@/components/app/event-join-form";
 import { EventJoinList } from "@/components/app/event-join-list";
+import { AddToCalendar } from "@/components/app/add-to-calendar";
 import { EVENT_PLACEHOLDERS } from "@/lib/placeholders";
 
 interface EventDetailPageProps {
@@ -69,6 +70,31 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
         event={event}
         imageUrl={event.createdByCoach.profileImageUrl ?? EVENT_PLACEHOLDERS[0]}
       />
+
+      <Card>
+        <CardContent>
+          <h3 className="text-lg font-semibold">Add to calendar</h3>
+          <p className="text-sm text-muted">Save this sparring session to your calendar.</p>
+          <div className="mt-4">
+            <AddToCalendar
+              event={{
+                id: event.id,
+                title: event.title,
+                description: event.description,
+                dateTimeStart: event.dateTimeStart,
+                dateTimeEnd: event.dateTimeEnd,
+                gym: {
+                  name: event.gym.name,
+                  address: event.gym.address,
+                  suburb: event.gym.suburb,
+                  state: event.gym.state,
+                  country: event.gym.country
+                }
+              }}
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       {!isCreator && (
         <Card>

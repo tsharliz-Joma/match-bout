@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -14,6 +15,7 @@ import { Label } from "@/components/ui/label";
 
 export function EventJoinForm({ eventId, fighters }: { eventId: string; fighters: { id: string; fullName: string; weightKg: number }[] }) {
   const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
   const form = useForm<z.infer<typeof eventJoinSchema>>({
     resolver: zodResolver(eventJoinSchema),
     defaultValues: {
@@ -31,7 +33,7 @@ export function EventJoinForm({ eventId, fighters }: { eventId: string; fighters
       return;
     }
     toast.success("Join request sent");
-    window.location.reload();
+    router.refresh();
   };
 
   if (fighters.length === 0) {
@@ -51,6 +53,9 @@ export function EventJoinForm({ eventId, fighters }: { eventId: string; fighters
             </option>
           ))}
         </Select>
+        {form.formState.errors.fighterId?.message ? (
+          <p className="text-xs text-emberGlow">{form.formState.errors.fighterId.message}</p>
+        ) : null}
       </div>
       <Button type="submit" disabled={submitting} className="w-full">
         Request join

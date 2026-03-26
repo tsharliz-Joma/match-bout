@@ -1,3 +1,5 @@
+"use client";
+
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,8 +9,8 @@ interface EventCardProps {
     id: string;
     title: string;
     description: string;
-    dateTimeStart: Date;
-    dateTimeEnd: Date;
+    dateTimeStart: Date | string;
+    dateTimeEnd: Date | string;
     skillLevel: string;
     weightClassMinKg: number;
     weightClassMaxKg: number;
@@ -22,6 +24,9 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, imageUrl, action }: EventCardProps) {
+  const start = typeof event.dateTimeStart === "string" ? new Date(event.dateTimeStart) : event.dateTimeStart;
+  const end = typeof event.dateTimeEnd === "string" ? new Date(event.dateTimeEnd) : event.dateTimeEnd;
+
   return (
     <Card className="overflow-hidden">
       <div className="relative h-44 w-full">
@@ -48,11 +53,11 @@ export function EventCard({ event, imageUrl, action }: EventCardProps) {
         <div className="grid gap-3 text-sm text-white/80 sm:grid-cols-2">
           <div>
             <p className="text-xs uppercase text-muted">Date</p>
-            <p className="font-semibold text-white">{format(event.dateTimeStart, "MMM d, yyyy")}</p>
+            <p className="font-semibold text-white">{format(start, "MMM d, yyyy")}</p>
           </div>
           <div>
             <p className="text-xs uppercase text-muted">Time</p>
-            <p className="font-semibold text-white">{format(event.dateTimeStart, "h:mm a")} - {format(event.dateTimeEnd, "h:mm a")}</p>
+            <p className="font-semibold text-white">{format(start, "h:mm a")} - {format(end, "h:mm a")}</p>
           </div>
           <div>
             <p className="text-xs uppercase text-muted">Weight</p>

@@ -1,15 +1,41 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { EVENT_PLACEHOLDERS } from "@/lib/placeholders";
+import { HeroCarousel } from "@/components/app/hero-carousel";
 
 export default function MarketingPage() {
+  const carouselSlides = [
+    {
+      title: "Redline Pro Camp",
+      detail: "65-90 kg • Pro • 6:00 pm",
+      summary: "Redline Combat • 65-90 kg",
+      image: EVENT_PLACEHOLDERS[0],
+      badge: "Tonight"
+    },
+    {
+      title: "Technical Sparring Night",
+      detail: "65-78 kg • Intermediate • 7:30 pm",
+      summary: "Iron Harbor • 65-78 kg",
+      image: EVENT_PLACEHOLDERS[1],
+      badge: "Next up"
+    },
+    {
+      title: "Beginner Rhythm Rounds",
+      detail: "55-70 kg • Beginner • 5:30 pm",
+      summary: "Northside • 55-70 kg",
+      image: EVENT_PLACEHOLDERS[2],
+      badge: "Open slots"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-canvas text-white">
       <div className="bg-grid">
         <div className="mx-auto max-w-6xl px-6 py-16">
           <header className="flex flex-wrap items-center justify-between gap-6">
             <div>
-              <p className="font-display text-2xl tracking-widest">match-bout</p>
+              <p className="font-display text-2xl tracking-widest">SparConnect</p>
               <p className="text-xs uppercase text-muted">sparring network</p>
             </div>
             <div className="flex items-center gap-3">
@@ -32,7 +58,7 @@ export default function MarketingPage() {
                 Organise structured sparring between gyms.
               </h1>
               <p className="mt-6 text-lg text-muted">
-                match-bout streamlines event hosting, fighter matching, and private requests so your gym can focus on performance.
+                Plan events, match fighters, and approve requests in one smooth workflow.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link href="/auth/sign-up">
@@ -43,25 +69,8 @@ export default function MarketingPage() {
                 </Link>
               </div>
             </div>
-            <div className="animate-fade-up rounded-2xl border border-white/10 bg-steel/70 p-6 shadow-soft" style={{ animationDelay: "120ms" }}>
-              <p className="text-xs uppercase text-muted">Live snapshot</p>
-              <h3 className="mt-2 text-xl font-semibold">Tonight's sparring board</h3>
-              <div className="mt-6 space-y-4">
-                {[
-                  { title: "Technical Sparring Night", gym: "Iron Harbor Boxing", weight: "65-78 kg", level: "Intermediate" },
-                  { title: "Redline Pro Camp", gym: "Redline Combat Club", weight: "68-90 kg", level: "Pro" },
-                  { title: "Beginner Rhythm Rounds", gym: "Northside Fight Lab", weight: "55-70 kg", level: "Beginner" }
-                ].map((event) => (
-                  <div key={event.title} className="rounded-xl border border-white/10 bg-charcoal p-4">
-                    <p className="text-sm font-semibold">{event.title}</p>
-                    <div className="mt-2 flex items-center justify-between text-xs text-muted">
-                      <span>{event.gym}</span>
-                      <span>{event.weight}</span>
-                      <span>{event.level}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="animate-fade-up" style={{ animationDelay: "120ms" }}>
+              <HeroCarousel slides={carouselSlides} />
             </div>
           </section>
 

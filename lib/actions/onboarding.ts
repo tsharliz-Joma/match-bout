@@ -24,8 +24,8 @@ export async function createGymForCoach(formData: {
     where: { id: session.user.id }
   });
 
-  if (!existingCoach || existingCoach.gymId) {
-    return { success: false, error: "Gym already assigned" };
+  if (!existingCoach) {
+    return { success: false, error: "Coach not found" };
   }
 
   const parsed = createGymSchema.safeParse(formData);
@@ -75,6 +75,10 @@ export async function requestGymJoin(formData: { gymId: string }) {
     return { success: false, error: parsed.error.errors[0]?.message ?? "Invalid data" };
   }
 
+  if (existingCoach.gymId === parsed.data.gymId) {
+    return { success: false, error: "You are already in this gym" };
+  }
+
   const existingRequest = await prisma.gymJoinRequest.findUnique({
     where: {
       gymId_coachId: {
@@ -84,22 +88,32 @@ export async function requestGymJoin(formData: { gymId: string }) {
     }
   });
 
+  let joinRequest = existingRequest;
   if (existingRequest) {
-    return { success: false, error: "Join request already sent" };
+    if (existingRequest.status === JoinRequestStatus.DECLINED || existingRequest.status === JoinRequestStatus.CANCELLED) {
+      joinRequest = await prisma.gymJoinRequest.update({
+        where: { id: existingRequest.id },
+        data: { status: JoinRequestStatus.PENDING }
+      });
+    } else {
+      return { success: false, error: "Join request already sent" };
+    }
+  } else {
+    joinRequest = await prisma.gymJoinRequest.create({
+      data: {
+        gymId: parsed.data.gymId,
+        coachId: session.user.id,
+        status: JoinRequestStatus.PENDING
+      }
+    });
   }
 
-  const joinRequest = await prisma.gymJoinRequest.create({
-    data: {
-      gymId: parsed.data.gymId,
-      coachId: session.user.id,
-      status: JoinRequestStatus.PENDING
-    }
-  });
-
-  await prisma.coach.update({
-    where: { id: session.user.id },
-    data: { status: CoachStatus.PENDING_APPROVAL }
-  });
+  if (!existingCoach.gymId) {
+    await prisma.coach.update({
+      where: { id: session.user.id },
+      data: { status: CoachStatus.PENDING_APPROVAL }
+    });
+  }
 
   const admins = await prisma.coach.findMany({
     where: {
@@ -121,6 +135,7 @@ export async function requestGymJoin(formData: { gymId: string }) {
   }
 
   revalidatePath("/auth/onboarding");
+  revalidatePath("/app/gyms");
   return { success: true, requestId: joinRequest.id };
 }
 

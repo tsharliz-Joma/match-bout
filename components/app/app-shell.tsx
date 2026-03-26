@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Calendar, LayoutDashboard, Users, UserRound, ShieldCheck, ClipboardList } from "lucide-react";
+import { Bell, Calendar, LayoutDashboard, Users, UserRound, ShieldCheck, ClipboardList, Building2 } from "lucide-react";
 
 interface AppShellProps {
   coach: {
@@ -23,6 +23,7 @@ const primaryNav = [
   { label: "Dashboard", href: "/app/dashboard", icon: LayoutDashboard },
   { label: "Events", href: "/app/events", icon: Calendar },
   { label: "Requests", href: "/app/requests", icon: ClipboardList },
+  { label: "Gyms", href: "/app/gyms", icon: Building2 },
   { label: "Fighters", href: "/app/fighters", icon: UserRound },
   { label: "Notifications", href: "/app/notifications", icon: Bell }
 ];
@@ -40,7 +41,7 @@ export function AppShell({ coach, unreadCount, children }: AppShellProps) {
       <div className="hidden lg:flex">
         <aside className="fixed left-0 top-0 h-full w-64 border-r border-white/10 bg-midnight/80 px-6 py-8">
           <div className="mb-10">
-            <p className="font-display text-2xl tracking-widest">match-bout</p>
+            <p className="font-display text-2xl tracking-widest">SparConnect</p>
             <p className="text-xs uppercase text-muted">sparring network</p>
           </div>
           <div className="mb-8 space-y-1">

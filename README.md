@@ -1,4 +1,4 @@
-# match-bout
+# SparConnect
 
 Premium sparring coordination platform for boxing gyms, coaches, and fighters. Built as an MVP with mobile-ready architecture.
 

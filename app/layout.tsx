@@ -7,7 +7,7 @@ const displayFont = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "-
 const bodyFont = Manrope({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-body" });
 
 export const metadata: Metadata = {
-  title: "match-bout",
+  title: "SparConnect",
   description: "Organise structured sparring between gyms."
 };
 

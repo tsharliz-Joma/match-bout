@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { EventCard } from "@/components/app/event-card";
 import { PageHeader } from "@/components/app/page-header";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/app/empty-state";
-import { EVENT_PLACEHOLDERS } from "@/lib/placeholders";
+import { EventsBrowser } from "@/components/app/events-browser";
 
 export default async function EventsPage() {
   const session = await auth();
@@ -42,6 +41,29 @@ export default async function EventsPage() {
     return new Date(a.dateTimeStart).getTime() - new Date(b.dateTimeStart).getTime();
   });
 
+  const serializedEvents = sorted.map((event) => ({
+    id: event.id,
+    title: event.title,
+    description: event.description,
+    dateTimeStart: event.dateTimeStart.toISOString(),
+    dateTimeEnd: event.dateTimeEnd.toISOString(),
+    skillLevel: event.skillLevel,
+    weightClassMinKg: event.weightClassMinKg,
+    weightClassMaxKg: event.weightClassMaxKg,
+    stancePreference: event.stancePreference,
+    maxParticipants: event.maxParticipants,
+    createdByCoachId: event.createdByCoachId,
+    gym: {
+      name: event.gym.name,
+      plan: event.gym.plan
+    },
+    createdByCoach: {
+      fullName: event.createdByCoach.fullName,
+      plan: event.createdByCoach.plan,
+      profileImageUrl: event.createdByCoach.profileImageUrl
+    }
+  }));
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -58,24 +80,11 @@ export default async function EventsPage() {
         <EmptyState
           title="No upcoming events"
           description="Create the first sparring event to start matching coaches."
+          actionLabel="Create event"
+          actionHref="/app/events/new"
         />
       ) : (
-        <div className="grid gap-4 lg:grid-cols-2">
-          {sorted.map((event, index) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              imageUrl={event.createdByCoach.profileImageUrl ?? EVENT_PLACEHOLDERS[index % EVENT_PLACEHOLDERS.length]}
-              action={
-                <Link href={`/app/events/${event.id}`}>
-                  <Button variant={event.createdByCoachId === coachId ? "secondary" : "primary"} className="w-full">
-                    {event.createdByCoachId === coachId ? "Manage" : "View & Join"}
-                  </Button>
-                </Link>
-              }
-            />
-          ))}
-        </div>
+        <EventsBrowser events={serializedEvents} coachId={coachId} />
       )}
     </div>
   );

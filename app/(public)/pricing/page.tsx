@@ -32,7 +32,7 @@ export default function PricingPage() {
       <div className="mx-auto max-w-6xl px-6 py-16">
         <header className="flex flex-wrap items-center justify-between gap-6">
           <div>
-            <p className="font-display text-2xl tracking-widest">match-bout</p>
+            <p className="font-display text-2xl tracking-widest">SparConnect</p>
             <p className="text-xs uppercase text-muted">Pricing</p>
           </div>
           <div className="flex items-center gap-3">

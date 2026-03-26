@@ -1,10 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { approveJoinRequest, declineJoinRequest } from "@/lib/actions/onboarding";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export function GymJoinRequests({ requests }: { requests: { id: string; coachName: string; coachEmail: string; status: string }[] }) {
+  const router = useRouter();
+
   if (requests.length === 0) {
     return <p className="text-sm text-muted">No join requests.</p>;
   }
@@ -16,7 +19,7 @@ export function GymJoinRequests({ requests }: { requests: { id: string; coachNam
       return;
     }
     toast.success("Coach approved");
-    window.location.reload();
+    router.refresh();
   };
 
   const handleDecline = async (id: string) => {
@@ -26,7 +29,7 @@ export function GymJoinRequests({ requests }: { requests: { id: string; coachNam
       return;
     }
     toast.success("Coach declined");
-    window.location.reload();
+    router.refresh();
   };
 
   return (

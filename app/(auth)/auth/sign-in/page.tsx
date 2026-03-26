@@ -42,7 +42,7 @@ export default function SignInPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="font-display text-2xl tracking-widest">match-bout</p>
+        <p className="font-display text-2xl tracking-widest">SparConnect</p>
         <h1 className="mt-2 text-xl font-semibold">Sign in</h1>
         <p className="text-sm text-muted">Continue to your sparring dashboard.</p>
       </div>
@@ -51,10 +51,16 @@ export default function SignInPage() {
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input id="email" type="email" {...form.register("email")} />
+          {form.formState.errors.email?.message ? (
+            <p className="text-xs text-emberGlow">{form.formState.errors.email.message}</p>
+          ) : null}
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <Input id="password" type="password" {...form.register("password")} />
+          {form.formState.errors.password?.message ? (
+            <p className="text-xs text-emberGlow">{form.formState.errors.password.message}</p>
+          ) : null}
         </div>
         <Button type="submit" className="w-full">Sign in</Button>
       </form>

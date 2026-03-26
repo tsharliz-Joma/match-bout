@@ -46,19 +46,31 @@ export function EventCreateForm() {
       <div className="space-y-2">
         <Label htmlFor="title">Event title</Label>
         <Input id="title" {...form.register("title")} />
+        {form.formState.errors.title?.message ? (
+          <p className="text-xs text-emberGlow">{form.formState.errors.title.message}</p>
+        ) : null}
       </div>
       <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
         <Textarea id="description" {...form.register("description")} />
+        {form.formState.errors.description?.message ? (
+          <p className="text-xs text-emberGlow">{form.formState.errors.description.message}</p>
+        ) : null}
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="dateTimeStart">Start</Label>
           <Input id="dateTimeStart" type="datetime-local" {...form.register("dateTimeStart")} />
+          {form.formState.errors.dateTimeStart?.message ? (
+            <p className="text-xs text-emberGlow">{form.formState.errors.dateTimeStart.message}</p>
+          ) : null}
         </div>
         <div className="space-y-2">
           <Label htmlFor="dateTimeEnd">End</Label>
           <Input id="dateTimeEnd" type="datetime-local" {...form.register("dateTimeEnd")} />
+          {form.formState.errors.dateTimeEnd?.message ? (
+            <p className="text-xs text-emberGlow">{form.formState.errors.dateTimeEnd.message}</p>
+          ) : null}
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
@@ -70,6 +82,9 @@ export function EventCreateForm() {
             <option value="ADVANCED">Advanced</option>
             <option value="PRO">Pro</option>
           </Select>
+          {form.formState.errors.skillLevel?.message ? (
+            <p className="text-xs text-emberGlow">{form.formState.errors.skillLevel.message}</p>
+          ) : null}
         </div>
         <div className="space-y-2">
           <Label htmlFor="stancePreference">Stance preference</Label>
@@ -79,21 +94,33 @@ export function EventCreateForm() {
             <option value="SOUTHPAW">Southpaw</option>
             <option value="SWITCH">Switch</option>
           </Select>
+          {form.formState.errors.stancePreference?.message ? (
+            <p className="text-xs text-emberGlow">{form.formState.errors.stancePreference.message}</p>
+          ) : null}
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="weightClassMinKg">Weight min (kg)</Label>
           <Input id="weightClassMinKg" type="number" {...form.register("weightClassMinKg")} />
+          {form.formState.errors.weightClassMinKg?.message ? (
+            <p className="text-xs text-emberGlow">{form.formState.errors.weightClassMinKg.message}</p>
+          ) : null}
         </div>
         <div className="space-y-2">
           <Label htmlFor="weightClassMaxKg">Weight max (kg)</Label>
           <Input id="weightClassMaxKg" type="number" {...form.register("weightClassMaxKg")} />
+          {form.formState.errors.weightClassMaxKg?.message ? (
+            <p className="text-xs text-emberGlow">{form.formState.errors.weightClassMaxKg.message}</p>
+          ) : null}
         </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor="maxParticipants">Max participants</Label>
         <Input id="maxParticipants" type="number" {...form.register("maxParticipants")} />
+        {form.formState.errors.maxParticipants?.message ? (
+          <p className="text-xs text-emberGlow">{form.formState.errors.maxParticipants.message}</p>
+        ) : null}
       </div>
       <Button type="submit" className="w-full">Create event</Button>
     </form>

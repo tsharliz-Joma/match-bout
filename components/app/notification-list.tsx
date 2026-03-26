@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { markAllNotificationsRead, markNotificationRead } from "@/lib/actions/notifications";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,8 @@ interface NotificationItem {
 }
 
 export function NotificationList({ notifications }: { notifications: NotificationItem[] }) {
+  const router = useRouter();
+
   if (notifications.length === 0) {
     return <p className="text-sm text-muted">No notifications yet.</p>;
   }
@@ -26,7 +29,7 @@ export function NotificationList({ notifications }: { notifications: Notificatio
       return;
     }
     toast.success("Marked as read");
-    window.location.reload();
+    router.refresh();
   };
 
   const handleReadAll = async () => {
@@ -36,7 +39,7 @@ export function NotificationList({ notifications }: { notifications: Notificatio
       return;
     }
     toast.success("All notifications marked as read");
-    window.location.reload();
+    router.refresh();
   };
 
   return (

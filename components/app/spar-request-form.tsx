@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -22,6 +23,7 @@ export function SparRequestForm({
   fighters: { id: string; fullName: string; weightKg: number }[];
   myGym: { id: string; name: string } | null;
 }) {
+  const router = useRouter();
   const form = useForm<z.infer<typeof sparRequestSchema>>({
     resolver: zodResolver(sparRequestSchema),
     defaultValues: {
@@ -48,7 +50,7 @@ export function SparRequestForm({
     }
     toast.success("Spar request sent");
     form.reset();
-    window.location.reload();
+    router.refresh();
   };
 
   if (coaches.length === 0) {
@@ -72,6 +74,9 @@ export function SparRequestForm({
             </option>
           ))}
         </Select>
+        {form.formState.errors.toCoachId?.message ? (
+          <p className="text-xs text-emberGlow">{form.formState.errors.toCoachId.message}</p>
+        ) : null}
       </div>
       <div className="space-y-2">
         <Label htmlFor="proposedGymId">Proposed location</Label>
@@ -83,6 +88,9 @@ export function SparRequestForm({
             </option>
           ))}
         </Select>
+        {form.formState.errors.proposedGymId?.message ? (
+          <p className="text-xs text-emberGlow">{form.formState.errors.proposedGymId.message}</p>
+        ) : null}
       </div>
       <div className="space-y-2">
         <Label>Proposed fighters</Label>
@@ -94,14 +102,23 @@ export function SparRequestForm({
             </label>
           ))}
         </div>
+        {form.formState.errors.fighterIds?.message ? (
+          <p className="text-xs text-emberGlow">{form.formState.errors.fighterIds.message}</p>
+        ) : null}
       </div>
       <div className="space-y-2">
         <Label htmlFor="proposedDateTime">Proposed date/time</Label>
         <Input id="proposedDateTime" type="datetime-local" {...form.register("proposedDateTime")} />
+        {form.formState.errors.proposedDateTime?.message ? (
+          <p className="text-xs text-emberGlow">{form.formState.errors.proposedDateTime.message}</p>
+        ) : null}
       </div>
       <div className="space-y-2">
         <Label htmlFor="message">Message</Label>
         <Textarea id="message" {...form.register("message")} />
+        {form.formState.errors.message?.message ? (
+          <p className="text-xs text-emberGlow">{form.formState.errors.message.message}</p>
+        ) : null}
       </div>
       <Button type="submit" className="w-full">Send request</Button>
     </form>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -26,6 +27,7 @@ interface GymOption {
 }
 
 export function OnboardingClient({ coachStatus, gyms }: { coachStatus: string; gyms: GymOption[] }) {
+  const router = useRouter();
   const [tab, setTab] = useState("create");
   const [search, setSearch] = useState("");
 
@@ -61,7 +63,7 @@ export function OnboardingClient({ coachStatus, gyms }: { coachStatus: string; g
       return;
     }
     toast.success("Gym created. You are now a gym admin.");
-    window.location.href = "/app/dashboard";
+    router.push("/app/dashboard");
   };
 
   const handleJoin = async (values: z.infer<typeof joinGymSchema>) => {
@@ -71,7 +73,7 @@ export function OnboardingClient({ coachStatus, gyms }: { coachStatus: string; g
       return;
     }
     toast.success("Join request sent. Waiting for approval.");
-    window.location.reload();
+    router.refresh();
   };
 
   if (coachStatus === "PENDING_APPROVAL") {
@@ -81,7 +83,7 @@ export function OnboardingClient({ coachStatus, gyms }: { coachStatus: string; g
         <p className="text-sm text-muted">
           Your gym admin needs to approve your request. You will receive a notification once approved.
         </p>
-        <Button onClick={() => window.location.href = "/auth/sign-in"} variant="outline">
+        <Button onClick={() => router.push("/auth/sign-in")} variant="outline">
           Return to sign in
         </Button>
       </div>
@@ -91,7 +93,7 @@ export function OnboardingClient({ coachStatus, gyms }: { coachStatus: string; g
   return (
     <div className="space-y-6">
       <div>
-        <p className="font-display text-2xl tracking-widest">match-bout</p>
+        <p className="font-display text-2xl tracking-widest">SparConnect</p>
         <h1 className="mt-2 text-xl font-semibold">Finish onboarding</h1>
         <p className="text-sm text-muted">Choose how you want to connect your gym.</p>
       </div>
@@ -107,29 +109,47 @@ export function OnboardingClient({ coachStatus, gyms }: { coachStatus: string; g
             <div className="space-y-2">
               <Label htmlFor="name">Gym name</Label>
               <Input id="name" {...createForm.register("name")} />
+              {createForm.formState.errors.name?.message ? (
+                <p className="text-xs text-emberGlow">{createForm.formState.errors.name.message}</p>
+              ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="address">Address</Label>
               <Input id="address" {...createForm.register("address")} />
+              {createForm.formState.errors.address?.message ? (
+                <p className="text-xs text-emberGlow">{createForm.formState.errors.address.message}</p>
+              ) : null}
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="suburb">Suburb</Label>
                 <Input id="suburb" {...createForm.register("suburb")} />
+                {createForm.formState.errors.suburb?.message ? (
+                  <p className="text-xs text-emberGlow">{createForm.formState.errors.suburb.message}</p>
+                ) : null}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="state">State</Label>
                 <Input id="state" {...createForm.register("state")} />
+                {createForm.formState.errors.state?.message ? (
+                  <p className="text-xs text-emberGlow">{createForm.formState.errors.state.message}</p>
+                ) : null}
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="country">Country</Label>
                 <Input id="country" {...createForm.register("country")} />
+                {createForm.formState.errors.country?.message ? (
+                  <p className="text-xs text-emberGlow">{createForm.formState.errors.country.message}</p>
+                ) : null}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone (optional)</Label>
                 <Input id="phone" {...createForm.register("phone")} />
+                {createForm.formState.errors.phone?.message ? (
+                  <p className="text-xs text-emberGlow">{createForm.formState.errors.phone.message}</p>
+                ) : null}
               </div>
             </div>
             <input type="hidden" {...createForm.register("heroImageUrl")} />
@@ -157,6 +177,9 @@ export function OnboardingClient({ coachStatus, gyms }: { coachStatus: string; g
                   </option>
                 ))}
               </Select>
+              {joinForm.formState.errors.gymId?.message ? (
+                <p className="text-xs text-emberGlow">{joinForm.formState.errors.gymId.message}</p>
+              ) : null}
             </div>
             <div className="rounded-lg border border-white/10 bg-charcoal p-4 text-xs text-muted">
               <p>Gyms available: {filteredGyms.length}</p>
