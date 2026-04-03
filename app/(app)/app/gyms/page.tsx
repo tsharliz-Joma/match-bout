@@ -22,7 +22,19 @@ export default async function GymsPage() {
 
   const gyms = await prisma.gym.findMany({
     include: {
-      coaches: { orderBy: { fullName: "asc" } },
+      coaches: {
+        orderBy: { fullName: "asc" },
+        select: {
+          id: true,
+          fullName: true,
+          role: true,
+          plan: true,
+          cancellationRate: true,
+          noShowRate: true,
+          responsivenessScore: true,
+          approvalRate: true
+        }
+      },
       fighters: { orderBy: { fullName: "asc" } }
     },
     orderBy: { createdAt: "desc" }
@@ -35,28 +47,49 @@ export default async function GymsPage() {
       })
     : [];
 
-  const serializedGyms = gyms.map((gym) => ({
-    id: gym.id,
-    name: gym.name,
-    suburb: gym.suburb,
-    state: gym.state,
-    country: gym.country,
-    plan: gym.plan,
-    isVerified: gym.isVerified,
-    heroImageUrl: gym.heroImageUrl,
-    coaches: gym.coaches.map((member) => ({
-      id: member.id,
-      fullName: member.fullName,
-      role: member.role,
-      plan: member.plan
-    })),
-    fighters: gym.fighters.map((fighter) => ({
-      id: fighter.id,
-      fullName: fighter.fullName,
-      weightKg: fighter.weightKg,
-      stance: fighter.stance
-    }))
-  }));
+  const serializedGyms = gyms.map((gym) => {
+    const coachesWithStats = gym.coaches.filter(
+      (c) => c.cancellationRate !== null || c.noShowRate !== null || c.responsivenessScore !== null || c.approvalRate !== null
+    );
+    const avg = (field: keyof typeof coachesWithStats[0]) => {
+      const vals = coachesWithStats
+        .map((c) => c[field] as number | null)
+        .filter((v): v is number => v !== null);
+      return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+    };
+
+    return {
+      id: gym.id,
+      name: gym.name,
+      suburb: gym.suburb,
+      state: gym.state,
+      country: gym.country,
+      plan: gym.plan,
+      isVerified: gym.isVerified,
+      heroImageUrl: gym.heroImageUrl,
+      reputation: {
+        cancellationRate: avg("cancellationRate"),
+        noShowRate: avg("noShowRate"),
+        responsivenessScore: avg("responsivenessScore"),
+        approvalRate: avg("approvalRate")
+      },
+      coaches: gym.coaches.map((member) => ({
+        id: member.id,
+        fullName: member.fullName,
+        role: member.role,
+        plan: member.plan
+      })),
+      fighters: gym.fighters.map((fighter) => ({
+        id: fighter.id,
+        fullName: fighter.fullName,
+        weightKg: fighter.weightKg,
+        stance: fighter.stance,
+        wins: fighter.wins,
+        losses: fighter.losses,
+        totalFights: fighter.totalFights
+      }))
+    };
+  });
 
   return (
     <div className="space-y-6">

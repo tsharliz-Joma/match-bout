@@ -12,14 +12,14 @@ const tiers = [
   },
   {
     name: "Coach Pro",
-    price: "$39",
+    price: "$0",
     description: "Unlimited events with priority placement.",
     features: ["Unlimited events", "Unlimited spar requests", "Priority event listing"],
     highlight: true
   },
   {
     name: "Gym Pro",
-    price: "$129",
+    price: "$0",
     description: "Gym-wide upgrades for multi-coach teams.",
     features: ["Featured gym badge", "Multi-coach analytics (placeholder)", "Priority support"],
     highlight: false

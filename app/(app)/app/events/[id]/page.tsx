@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { EventJoinForm } from "@/components/app/event-join-form";
 import { EventJoinList } from "@/components/app/event-join-list";
 import { AddToCalendar } from "@/components/app/add-to-calendar";
+import { EventReviewForm } from "@/components/app/event-review-form";
+import { EventReviewList } from "@/components/app/event-review-list";
 import { EVENT_PLACEHOLDERS } from "@/lib/placeholders";
 
 interface EventDetailPageProps {
@@ -30,6 +32,10 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
       createdByCoach: true,
       joins: {
         include: { fighter: true, coach: true }
+      },
+      reviews: {
+        include: { authorCoach: { select: { fullName: true } } },
+        orderBy: { createdAt: "desc" }
       }
     }
   });
@@ -53,6 +59,10 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
 
   const hasRequested = event.joins.some((join) => join.coachId === coachId);
   const isCreator = event.createdByCoachId === coachId;
+  const isEventPast = new Date() > event.dateTimeEnd;
+  const hasApprovedJoin = event.joins.some((join) => join.coachId === coachId && join.status === "APPROVED");
+  const canReview = isEventPast && (isCreator || hasApprovedJoin);
+  const hasReviewed = event.reviews.some((r) => r.authorCoachId === coachId);
 
   return (
     <div className="space-y-8">
@@ -130,6 +140,28 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
           </CardContent>
         </Card>
       )}
+
+      <Card>
+        <CardContent>
+          <h3 className="text-lg font-semibold">Reviews</h3>
+          <p className="text-sm text-muted">Feedback from coaches who attended this event.</p>
+          <div className="mt-4 space-y-6">
+            {canReview && !hasReviewed && (
+              <div className="rounded-xl border border-white/10 bg-charcoal/60 p-4">
+                <p className="mb-3 text-sm font-semibold">Leave a review</p>
+                <EventReviewForm eventId={event.id} />
+              </div>
+            )}
+            {canReview && hasReviewed && (
+              <p className="text-sm text-muted">You have already reviewed this event.</p>
+            )}
+            {!isEventPast && (
+              <p className="text-sm text-muted">Reviews will be available once the event has ended.</p>
+            )}
+            <EventReviewList reviews={event.reviews} />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -18,14 +18,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         const coach = await prisma.coach.findUnique({
-          where: { email: credentials.email }
+          where: { email: credentials.email as string }
         });
 
         if (!coach) {
           return null;
         }
 
-        const isValid = await compare(credentials.password, coach.passwordHash);
+        const isValid = await compare(credentials.password as string, coach.passwordHash);
         if (!isValid) {
           return null;
         }

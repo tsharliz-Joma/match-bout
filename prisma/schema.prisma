@@ -114,6 +114,7 @@ model Coach {
   sparReceived   SparRequest[]    @relation("SparRequestTo")
   notifications  Notification[]
   devices        CoachDevice[]
+  reviews        EventReview[]
 }
 
 model Gym {
@@ -187,6 +188,7 @@ model SparringEvent {
   gym            Gym         @relation(fields: [gymId], references: [id])
   createdByCoach Coach       @relation("EventsCreated", fields: [createdByCoachId], references: [id])
   joins          EventJoin[]
+  reviews        EventReview[]
 }
 
 model EventJoin {
@@ -256,6 +258,20 @@ model Notification {
   createdAt DateTime            @default(now())
 
   toCoach Coach @relation(fields: [toCoachId], references: [id])
+}
+
+model EventReview {
+  id            String   @id @default(cuid())
+  eventId       String
+  authorCoachId String
+  rating        Int
+  body          String
+  createdAt     DateTime @default(now())
+
+  event       SparringEvent @relation(fields: [eventId], references: [id])
+  authorCoach Coach         @relation(fields: [authorCoachId], references: [id])
+
+  @@unique([eventId, authorCoachId])
 }
 
 model CoachDevice {

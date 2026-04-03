@@ -20,8 +20,14 @@ type GymBrowserItem = {
   plan: string;
   isVerified: boolean;
   heroImageUrl?: string | null;
+  reputation: {
+    cancellationRate: number | null;
+    noShowRate: number | null;
+    responsivenessScore: number | null;
+    approvalRate: number | null;
+  };
   coaches: { id: string; fullName: string; role: string; plan: string }[];
-  fighters: { id: string; fullName: string; weightKg: number; stance: string }[];
+  fighters: { id: string; fullName: string; weightKg: number; stance: string; wins: number; losses: number; totalFights: number }[];
 };
 
 export function GymsBrowser({
@@ -220,6 +226,55 @@ export function GymsBrowser({
                     </div>
                   </div>
 
+                  <div>
+                    <h4 className="mb-3 text-sm font-semibold uppercase text-muted">Gym Etiquette</h4>
+                    {gym.reputation.cancellationRate === null &&
+                    gym.reputation.noShowRate === null &&
+                    gym.reputation.responsivenessScore === null &&
+                    gym.reputation.approvalRate === null ? (
+                      <p className="text-sm text-muted">No reputation data yet.</p>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        <div className="rounded-lg border border-white/10 bg-charcoal p-3">
+                          <p className="text-xs uppercase text-muted">Cancellation</p>
+                          <p className="text-lg font-semibold">
+                            {gym.reputation.cancellationRate !== null
+                              ? `${gym.reputation.cancellationRate.toFixed(1)}%`
+                              : "—"}
+                          </p>
+                          <p className="text-xs text-muted">Last 90 days</p>
+                        </div>
+                        <div className="rounded-lg border border-white/10 bg-charcoal p-3">
+                          <p className="text-xs uppercase text-muted">No-show</p>
+                          <p className="text-lg font-semibold">
+                            {gym.reputation.noShowRate !== null
+                              ? `${gym.reputation.noShowRate.toFixed(1)}%`
+                              : "—"}
+                          </p>
+                          <p className="text-xs text-muted">Last 90 days</p>
+                        </div>
+                        <div className="rounded-lg border border-white/10 bg-charcoal p-3">
+                          <p className="text-xs uppercase text-muted">Responsiveness</p>
+                          <p className="text-lg font-semibold">
+                            {gym.reputation.responsivenessScore !== null
+                              ? `${gym.reputation.responsivenessScore.toFixed(0)}/100`
+                              : "—"}
+                          </p>
+                          <p className="text-xs text-muted">Replies within 24h</p>
+                        </div>
+                        <div className="rounded-lg border border-white/10 bg-charcoal p-3">
+                          <p className="text-xs uppercase text-muted">Approval rate</p>
+                          <p className="text-lg font-semibold">
+                            {gym.reputation.approvalRate !== null
+                              ? `${gym.reputation.approvalRate.toFixed(1)}%`
+                              : "—"}
+                          </p>
+                          <p className="text-xs text-muted">Join approvals</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="grid gap-6 md:grid-cols-2">
                     <div>
                       <h4 className="text-sm font-semibold uppercase text-muted">Coaches</h4>
@@ -249,7 +304,7 @@ export function GymsBrowser({
                             <div key={fighter.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-white/10 bg-charcoal px-3 py-2">
                               <p className="text-sm font-semibold text-white">{fighter.fullName}</p>
                               <div className="text-xs text-muted">
-                                {fighter.weightKg} kg • {fighter.stance}
+                                {fighter.weightKg} kg • {fighter.stance} • {fighter.wins}W-{fighter.losses}L ({fighter.totalFights})
                               </div>
                             </div>
                           ))}
